@@ -7,7 +7,7 @@ are plenty of doxygen comments in each of the header and source files
 
 ## Building D100FS
 
-To compile and install D100FS on Linux or MacOS, use the following commands:
+To compile and install D100FS on Linux, use the following commands:
 
 ```
 git clone https://github.com/CPI-CoolPeopleInc/D100FS.git
