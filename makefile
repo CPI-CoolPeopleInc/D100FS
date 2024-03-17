@@ -28,7 +28,8 @@ OUTPUT_DIRS=$(BIN) \
 			$(TMP)/format \
 			$(TMP)/libs \
 			$(TMP)/write
-PREFIX=/usr/local
+PREFIX=/usr/local/bin
+LIB_PREFIX=/usr/lib
 
 LIBS_OBJS=$(patsubst $(SRC)/libs/%.c,$(TMP)/libs/%.o,$(shell find $(SRC)/libs -name "*.c" -type f))
 FORMAT_OBJS=$(patsubst $(SRC)/format/%.c,$(TMP)/format/%.o,$(wildcard $(SRC)/format/*.c))
@@ -36,24 +37,24 @@ WRITE_OBJS=$(patsubst $(SRC)/write/%.c,$(TMP)/write/%.o,$(wildcard $(SRC)/write/
 
 FORMAT_CFLAGS=-I$(SRC)/libs
 FORMAT_LDFLAGS=-L$(BIN) -ld100
-LIBS_CFLAGS=
-LIBS_LDFLAGS=-r
+LIBS_CFLAGS=-fPIC
+LIBS_LDFLAGS=-shared
 WRITE_CFLAGS=-I$(SRC)/libs/
 WRITE_LDFLAGS=-L$(BIN) -ld100
 
 CC=gcc
 LINK=gcc
 
-.PHONY: all install format clean dirs libs
+.PHONY: all install format clean dirs libs uninstall
 
 all: dirs format write clean
 
 dirs: $(OUTPUT_DIRS)
 
 install:
-	install $(BIN)/d100mkfs $(PREFIX)/bin
-	install $(BIN)/d100copy $(PREFIX)/bin
-	install $(BIN)/libd100.so $(PREFIX)/lib
+	install $(BIN)/d100mkfs $(PREFIX)
+	install $(BIN)/d100copy $(PREFIX)
+	install $(BIN)/libd100.so $(LIB_PREFIX)
 
 format: $(BIN)/d100mkfs
 
@@ -63,6 +64,11 @@ clean:
 	rm -r $(TMP)
 
 libs: $(BIN)/libd100.so
+
+uninstall:
+	rm $(PREFIX)/d100mkfs
+	rm $(PREFIX)/d100copy
+	rm $(LIB_PREFIX)/libd100.so
 
 $(OUTPUT_DIRS):
 	mkdir -p $(OUTPUT_DIRS)
